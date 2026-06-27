@@ -1,0 +1,2 @@
+monbyline.sh monitor.sh скрипты для linux, два варианта построчный и статичный табличный 
+test_snmp.py скрипт для запуска в среде windows, перед завуском установить зависимости python -m pip install "pyasn1==0.4.8" "pysnmp==4.4.12"

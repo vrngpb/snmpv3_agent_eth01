@@ -1,0 +1,2 @@
+version: "1.0.0"
+description: "LWIP SNMP — builds SNMP sources from lwip for IDF v6 (no Kconfig option)"
