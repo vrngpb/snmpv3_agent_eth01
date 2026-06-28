@@ -89,9 +89,9 @@ idf.py -p COM3 flash monitor
 | Шлюз | 192.168.2.65 |
 | Маска | 255.255.255.224 |
 | Flash | 8 MB |
-| SNMPv3 username | snmpv3admin |
-| Auth (SHA-1) passphrase | authpassphrase01 |
-| Priv (AES-128) passphrase | privpassphrase01 |
+| SNMPv3 username | username |
+| Auth (SHA-1) passphrase | passphrase |
+| Priv (AES-128) passphrase | passphrase |
 
 > Сетевые параметры хранятся в NVS. При изменении через SNMP SET устройство перезагружается через 1 секунду.
 
@@ -138,21 +138,21 @@ snmp2_agent_eth01/
 
 ```bash
 # Прочитать все показатели
-snmpwalk -v3 -l authPriv -u snmpv3admin \
-  -a SHA -A authpassphrase01 \
-  -x AES -X privpassphrase01 \
+snmpwalk -v3 -l authPriv -u username \
+  -a SHA -A passphrase \
+  -x AES -X passphrase \
   192.168.2.75 .1.3.6.1.4.1.9999.1
 
 # Температура
-snmpget -v3 -l authPriv -u snmpv3admin \
-  -a SHA -A authpassphrase01 \
-  -x AES -X privpassphrase01 \
+snmpget -v3 -l authPriv -u username \
+  -a SHA -A passphrase \
+  -x AES -X passphrase \
   192.168.2.75 .1.3.6.1.4.1.9999.1.1.0
 
 # Изменить IP (устройство перезагрузится через 1 сек)
-snmpset -v3 -l authPriv -u snmpv3admin \
-  -a SHA -A authpassphrase01 \
-  -x AES -X privpassphrase01 \
+snmpset -v3 -l authPriv -u username \
+  -a SHA -A passphrase \
+  -x AES -X passphrase \
   192.168.2.75 \
   .1.3.6.1.4.1.9999.1.10.0 s "192.168.2.80" \
   .1.3.6.1.4.1.9999.1.11.0 s "192.168.2.65" \
@@ -174,7 +174,7 @@ chmod +x monitor.sh
 #!/bin/bash
 
 HOST="192.168.2.75"
-COMMUNITY="-v3 -l authPriv -u snmpv3admin -a SHA -A authpassphrase01 -x AES -X privpassphrase01"
+COMMUNITY="-v3 -l authPriv -u username -a SHA -A passphrase -x AES -X passphrase"
 
 get() { snmpget -Oqv $COMMUNITY "$HOST" "$1" 2>/dev/null; }
 
@@ -216,8 +216,8 @@ python test_snmp.py
 import time
 from pysnmp.hlapi import *
 
-AUTH = UsmUserData('snmpv3admin',
-                   authKey='authpassphrase01', privKey='privpassphrase01',
+AUTH = UsmUserData('username',
+                   authKey='passphrase', privKey='passphrase',
                    authProtocol=usmHMACSHAAuthProtocol,
                    privProtocol=usmAesCfb128Protocol)
 TARGET = UdpTransportTarget(('192.168.2.75', 161))
