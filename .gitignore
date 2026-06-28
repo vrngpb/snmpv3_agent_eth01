@@ -3,4 +3,5 @@ managed_components/
 sdkconfig.old  
 *.pyc  
 __pycache__/  
-.vscode/settings.json
+.vscode/
+hardware
