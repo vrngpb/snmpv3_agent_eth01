@@ -85,8 +85,8 @@ idf.py -p COM3 flash monitor
 
 | Параметр | Значение |
 |----------|---------|
-| IP-адрес | 10.149.130.75 |
-| Шлюз | 10.149.130.65 |
+| IP-адрес | 192.168.2.75 |
+| Шлюз | 192.168.2.65 |
 | Маска | 255.255.255.224 |
 | Flash | 8 MB |
 | SNMPv3 username | snmpv3admin |
@@ -141,21 +141,21 @@ snmp2_agent_eth01/
 snmpwalk -v3 -l authPriv -u snmpv3admin \
   -a SHA -A authpassphrase01 \
   -x AES -X privpassphrase01 \
-  10.149.130.75 .1.3.6.1.4.1.9999.1
+  192.168.2.75 .1.3.6.1.4.1.9999.1
 
 # Температура
 snmpget -v3 -l authPriv -u snmpv3admin \
   -a SHA -A authpassphrase01 \
   -x AES -X privpassphrase01 \
-  10.149.130.75 .1.3.6.1.4.1.9999.1.1.0
+  192.168.2.75 .1.3.6.1.4.1.9999.1.1.0
 
 # Изменить IP (устройство перезагрузится через 1 сек)
 snmpset -v3 -l authPriv -u snmpv3admin \
   -a SHA -A authpassphrase01 \
   -x AES -X privpassphrase01 \
-  10.149.130.75 \
-  .1.3.6.1.4.1.9999.1.10.0 s "10.149.130.80" \
-  .1.3.6.1.4.1.9999.1.11.0 s "10.149.130.65" \
+  192.168.2.75 \
+  .1.3.6.1.4.1.9999.1.10.0 s "192.168.2.80" \
+  .1.3.6.1.4.1.9999.1.11.0 s "192.168.2.65" \
   .1.3.6.1.4.1.9999.1.12.0 s "255.255.255.224"
 ```
 
@@ -173,7 +173,7 @@ chmod +x monitor.sh
 ```bash
 #!/bin/bash
 
-HOST="10.149.130.75"
+HOST="192.168.2.75"
 COMMUNITY="-v3 -l authPriv -u snmpv3admin -a SHA -A authpassphrase01 -x AES -X privpassphrase01"
 
 get() { snmpget -Oqv $COMMUNITY "$HOST" "$1" 2>/dev/null; }
@@ -220,7 +220,7 @@ AUTH = UsmUserData('snmpv3admin',
                    authKey='authpassphrase01', privKey='privpassphrase01',
                    authProtocol=usmHMACSHAAuthProtocol,
                    privProtocol=usmAesCfb128Protocol)
-TARGET = UdpTransportTarget(('10.149.130.75', 161))
+TARGET = UdpTransportTarget(('192.168.2.75', 161))
 
 while True:
     for (errInd, errSt, errIdx, varBinds) in getCmd(
@@ -255,14 +255,3 @@ while True:
 ## Сброс к заводским настройкам
 
 Удержание кнопки на GPIO 5 в течение 5 секунд стирает NVS-раздел. После перезагрузки устройство стартует с параметрами по умолчанию из `ethernet_app.c`.
-
-## Возможные улучшения
-
-- **SNMP Trap** — активная отправка уведомлений в NMS (Zabbix/PRTG) при авариях
-- **DHT22 / BME280** — датчик влажности и давления
-- **Оптрон PC817** — гальваническая развязка датчика протечки вместо транзистора
-- **mDNS** — авто-обнаружение устройства в сети
-
-## Лицензия
-
-MIT.
